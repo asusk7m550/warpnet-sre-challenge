@@ -1,0 +1,9 @@
+---
+# Generic puppet agent configuration
+
+# Loading resource subclasses
+resource::classes:
+- exec
+- file
+- user
+- service

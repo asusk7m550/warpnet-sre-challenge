@@ -1,0 +1,49 @@
+---
+classes:
+- roles::base
+- roles::nginx
+
+resource::service:
+  warpnet-sre-challenge:
+    ensure: running
+    enable: true
+
+resource::file:
+  '/etc/systemd/system/warpnet-sre-challenge.service':
+    owner: 'root'
+    group: 'root'
+    mode:  '0644'
+    notify:
+    - Exec[systemctl-daemon-reload]
+    - Service[warpnet-sre-challenge]
+    content: |
+      [Unit]
+      Description=Flask application written by Warpnet
+      Documentation=https://github.com/warpnet/sre-challenge
+      After=network.target
+
+      [Service]
+      User=vagrant
+      WorkingDirectory=/home/vagrant/app/
+      ExecStart=/usr/bin/gunicorn -w4 application:app
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+resource::exec:
+  'systemctl-daemon-reload':
+    command: '/usr/bin/systemctl daemon-reload'
+    refreshonly: true
+
+# configure nginx role
+nginx::nginx_servers:
+  'default-https':
+    server_name:
+    - 'default'
+    proxy: 'http://127.0.0.1:8000/'
+    proxy_set_header:
+    - 'X-Forwarded-For $proxy_add_x_forwarded_for'
+    - 'X-Forwarded-Proto $scheme'
+    - 'X-Forwarded-Host $host'
+    - 'X-Forwarded-Prefix /'
