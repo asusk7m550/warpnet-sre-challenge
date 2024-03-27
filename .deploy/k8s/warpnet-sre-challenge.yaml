@@ -1,0 +1,63 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: warpnet-sre-challenge
+  namespace: default
+spec:
+  rules:
+  - host: warpnet-sre-challenge.k8s.localdomain
+    http:
+      paths:
+      - backend:
+          service:
+            name: warpnet-sre-challenge
+            port:
+              number: 80
+        path: /
+        pathType: Exact
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warpnet-sre-challenge
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: flask
+    name: warpnet-sre-challenge
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: flask
+    name: warpnet-sre-challenge
+  name: warpnet-sre-challenge
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flask
+      name: warpnet-sre-challenge
+  strategy:
+    rollingUpdate:
+      maxSurge: 33%
+      maxUnavailable: 33%
+  template:
+    metadata:
+      labels:
+        app: flask
+        name: warpnet-sre-challenge
+    spec:
+      containers:
+      - image: docker.io/asusk7m550/warpnet-sre-challenge:20240327-1
+        name: warpnet-sre-challenge
+        ports:
+        - containerPort: 8000
+          protocol: TCP

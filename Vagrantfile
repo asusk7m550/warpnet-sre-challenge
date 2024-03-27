@@ -19,6 +19,11 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
+  # Define server for kubernetes
+  config.vm.define "k8s" do |k8s|
+    k8s.vm.hostname = "k8s.localdomain"
+  end
+
   # Synchronize the hiera content, so we can make use of it
   config.vm.synced_folder(".deploy/vagrant/hiera", "/tmp/vagrant-puppet/hiera")
 

@@ -1,0 +1,17 @@
+---
+classes:
+- roles::base
+
+resource::file:
+  '/tmp/install-k3s.sh':
+    owner: 'root'
+    group: 'root'
+    mode:  '0700'
+    replace: False
+    source: https://get.k3s.io
+    notify: Exec[install-k3s]
+
+resource::exec:
+  'install-k3s':
+    command: '/tmp/install-k3s.sh'
+    refreshonly: true
