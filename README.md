@@ -13,8 +13,9 @@
 ## Part 1 - Deploy the app on a traditional VM.
 
 There is a vagrant file which is able to spin up a virtual machine with nginx.
-Use the command `vagrant up web`
 The machine itself is provisioned by Puppet. The application is copied to the server and installed by a shell script.
+Install the correct submodules for the puppet modules by running `git submodule update --init --recursive`
+Start the webserver with the command `vagrant up web`
 
 To view the site, find the IP of the server (e.g. `vagrant ssh-config web | sed -n 's/.*HostName \(.*\)/\1/gp'`) and add in to your hostfile (e.g. `<IP> warpnet-sre-challenge.web.localdomain`).
 
@@ -22,7 +23,8 @@ You should be able to view the website on you browser under http://warpnet-sre-c
 
 ## Part 2 - Look into the application code and make adjustments that you think are necessary.
 
-TODO
+Some changes are made. It is possible to use flask_sqlalchemy and flask_login to make some code cleaner.
+Also an update on the password, it should not be plaintext in the database and nowhere to be seen.
 
 ## Part 3 - Deploy the app on a Kubernetes environment.
 
